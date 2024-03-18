@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 library ShamirSecretSharing {
     function split(bytes32 secret, uint8 threshold, uint8 shares)
         internal
-        pure
+        view
         returns (bytes32[] memory)
     {
         require(threshold > 1, "Threshold must be greater than 1");
         require(shares >= threshold, "Number of shares must be >= threshold");
 
-        uint256[2] memory coefficients = generateCoefficients(secret, threshold);
+        uint256[] memory coefficients = generateCoefficients(secret, threshold);
         bytes32[] memory shareValues = new bytes32[](shares);
 
         for (uint8 i = 1; i <= shares; i++) {
@@ -20,43 +20,43 @@ library ShamirSecretSharing {
         return shareValues;
     }
 
-    function reconstruct(bytes32[] memory shares)
-        internal
-        pure
-        returns (bytes32)
-    {
-        uint8 threshold = uint8(shares.length);
-        require(threshold > 1, "Threshold must be greater than 1");
+    function reconstruct(bytes32[] memory shares) internal pure returns (bytes32) {
+    uint8 threshold = uint8(shares.length);
+    require(threshold > 1, "Threshold must be greater than 1");
 
-        bytes32 sum;
-        for (uint8 i = 0; i < threshold; i++) {
-            bytes32 numerator = shares[i];
-            bytes32 denominatorProd = bytes32(uint256(1));
-            for (uint8 j = 0; j < threshold; j++) {
-                if (j != i) {
-                    denominatorProd = (denominatorProd * bytes32(i + 1)) / bytes32(i + 1 - j);
-                }
+    bytes32 sum = bytes32(0);
+    for (uint8 i = 0; i < threshold; i++) {
+        bytes32 numerator = shares[i];
+        bytes32 denominatorProd = bytes32(uint256(1));
+        for (uint8 j = 0; j < threshold; j++) {
+            if (j != i) {
+                denominatorProd = bytes32(uint256(denominatorProd) * (i + 1) / (i + 1 - j));
             }
-            denominatorProd = invert(denominatorProd);
-            sum = sum + (numerator * denominatorProd);
         }
-
-        return sum;
+        denominatorProd = invert(denominatorProd);
+        sum = bytes32(uint256(sum) + (uint256(numerator) * uint256(denominatorProd)));
     }
+
+    return sum;
+}
 
     function generateCoefficients(bytes32 secret, uint8 threshold)
-        private
-        pure
-        returns (uint256[2] memory)
-    {
-        uint256[2] memory coefficients;
-        coefficients[0] = uint256(secret);
-        coefficients[1] = random();
+    private
+    view
+    returns (uint256[] memory)
+{
+    require(threshold > 1, "Threshold must be greater than 1");
+    uint256[] memory coefficients = new uint256[](threshold);
+    coefficients[0] = uint256(secret);
 
-        return coefficients;
+    for (uint8 i = 1; i < threshold; i++) {
+        coefficients[i] = random();
     }
 
-    function evaluatePolynomial(uint256[2] memory coefficients, uint8 x)
+    return coefficients;
+}
+
+    function evaluatePolynomial(uint256[] memory coefficients, uint8 x)
         private
         pure
         returns (bytes32)
