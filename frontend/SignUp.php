@@ -14,19 +14,23 @@
         <script src="script.js"></script>
 
         <div class="center">
-            <form action="" method="post" class="login-panel">
+            <form action="" method="post" class="signup-panel">
                 <h1>Sign Up</h1>
                 <div class="row login">
-                    <div class="column">
-                        <label for="username" class="login-label">Username</label>
-                        <input type="text" name="username" id="username" class="text-field login" />
-                    </div>
+                    <img src="user.png" alt="User Icon">
+                    <input type="text" name="username" id="username" placeholder="Username" class="text-field login" />
                 </div>
                 <div class="row login">
-                    <div class="column">
-                    <label for="passwd" class="login-label">Password</label>
-                    <input type="password" name="passwd" id="passwd" class="text-field login" />
-                    </div>      
+                    <img src="mail.png" alt="Mail Icon">
+                    <input type="text" name="email" id="email" placeholder="Email" class="text-field login" />     
+                </div>
+                <div class="row login">
+                    <img src="lock.png" alt="Lock Icon">
+                    <input type="password" name="passwd" id="passwd" placeholder="Password" class="text-field login" />
+                </div>
+                <div class="row login">
+                    <img src="lock.png" alt="Lock Icon">
+                    <input type="password" name="cfpwd" id="cfpwd" placeholder="Re-type Password" class="text-field login" />
                 </div>
 
                 <input type="submit" class="btn-login" name="Register" value="REGISTER" style="background-color: #4CA82C;">
